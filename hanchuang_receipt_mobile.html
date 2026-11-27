@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汉创胶业单据填写工具</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:#f2f2f2;color:#111;font-family:"SimSun","宋体",serif}
+h2{font-size:20px;text-align:center;margin:8px 0 18px}
+.panel{max-width:760px;margin:0 auto 16px;background:white;padding:16px;border-radius:10px;box-shadow:0 2px 10px #0001;font-family:Arial,"Microsoft YaHei",sans-serif}
+label{display:block;font-size:14px;margin:10px 0 4px}
+input{width:100%;padding:10px;border:1px solid #bbb;border-radius:6px;font-size:16px}
+button{border:0;border-radius:7px;padding:12px 16px;font-size:15px;margin:8px 6px 0 0;background:#222;color:white}
+button.secondary{background:#666}
+.paper{max-width:900px;margin:auto;background:white;border:1px solid #555;padding:16px 18px;font-family:"SimSun","宋体",serif}
+.paper h1{font-size:24px;text-align:center;margin:0 0 22px;font-weight:bold}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:15px;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:14px}
+th,td{border:1px solid #333;text-align:center;padding:5px 2px;overflow-wrap:anywhere}
+th{font-weight:normal}
+.product{text-align:left;padding-left:8px}
+.total-label{text-align:center}
+.small{font-size:14px;line-height:1.8;margin:3px 0}
+.edit{color:#b00000;border-bottom:1px solid #b00000;min-width:25px;display:inline-block}
+@media(max-width:520px){body{padding:8px}.paper{padding:12px 8px}.paper h1{font-size:19px}.meta{font-size:12px}table{font-size:12px}th,td{padding:5px 1px}.small{font-size:12px}}
+@media print{body{background:white;padding:0}.panel{display:none}.paper{border:1px solid #555;box-shadow:none;max-width:none;margin:0;padding:14px 16px}@page{size:A4;margin:12mm}}
+</style>
+</head>
+<body>
+<section class="panel">
+<h2>单据填写</h2>
+<label>客户名称</label><input id="customer" value="东博-汉创">
+<label>客户联系电话</label><input id="phone" placeholder="请输入联系电话">
+<label>单据编号</label><input id="number" value="XS-2026-11-16-011">
+<label>商品全名</label><input id="product" value="国标尼龙扎带4*150">
+<label>单位</label><input id="unit" value="包">
+<label>数量</label><input id="qty" type="number" value="666" min="0" step="1">
+<label>单价</label><input id="price" type="number" value="2.6276" min="0" step="0.0001">
+<div style="margin-top:12px;font-weight:bold">合计金额：<span id="sum">1750.00</span> 元</div>
+<button onclick="window.print()">打印 / 保存为 PDF</button>
+<button class="secondary" onclick="resetForm()">恢复示例数据</button>
+<p style="font-size:12px;color:#666">填写内容只保存在当前手机浏览器中。打印时会隐藏上方填写区。</p>
+</section>
+<main class="paper">
+<h1>湖南汉创胶业有限公司南宁分公司</h1>
+<div class="meta">
+<div>客户名称：<span class="edit" id="vCustomer"></span></div>
+<div>电话：<span class="edit" id="vPhone"></span></div>
+<div>单据编号：<span class="edit" id="vNumber"></span></div>
+</div>
+<table>
+<colgroup><col style="width:9%"><col style="width:40%"><col style="width:7%"><col style="width:10%"><col style="width:12%"><col style="width:12%"><col style="width:10%"></colgroup>
+<tr><th>行号</th><th>商品全名</th><th>单位</th><th>数量</th><th>单价</th><th>金额</th><th>备注</th></tr>
+<tr><td>1</td><td class="product"><span class="edit" id="vProduct"></span></td><td id="vUnit"></td><td><span class="edit" id="vQty"></span></td><td><span class="edit" id="vPrice"></span></td><td><span class="edit" id="vAmount"></span></td><td></td></tr>
+<tr><td>合计</td><td colspan="4" class="total-label">壹仟柒佰伍拾元整</td><td><span class="edit" id="vTotal"></span></td><td>元</td></tr>
+</table>
+<p class="small">地址：广西省南宁市西乡塘区秀灵路东五里105号橄榄宿3号楼116档</p>
+<p class="small">电话：18260878269  15240716868</p>
+<p class="small">温馨提示：产品数量如有错漏，请在三天内联系，逾期自负！</p>
+<p class="small">签收（未付款）：</p>
+</main>
+<script>
+const ids=["customer","phone","number","product","unit","qty","price"];
+function update(){
+ const val=id=>document.getElementById(id).value;
+ const q=Number(val("qty"))||0,p=Number(val("price"))||0,total=q*p;
+ document.getElementById("sum").textContent=total.toFixed(2);
+ const put=(id,text)=>document.getElementById(id).textContent=text;
+ put("vCustomer",val("customer"));put("vPhone",val("phone"));put("vNumber",val("number"));
+ put("vProduct",val("product"));put("vUnit",val("unit"));put("vQty",val("qty"));
+ put("vPrice",val("price"));put("vAmount",total.toFixed(2));put("vTotal",total.toFixed(2));
+}
+ids.forEach(id=>document.getElementById(id).addEventListener("input",update));
+function resetForm(){
+ const values={customer:"东博-汉创",phone:"",number:"XS-2026-11-16-011",product:"国标尼龙扎带4*150",unit:"包",qty:"666",price:"2.6276"};
+ Object.entries(values).forEach(([k,v])=>document.getElementById(k).value=v);update();
+}
+update();
+</script>
+</body>
+</html>
